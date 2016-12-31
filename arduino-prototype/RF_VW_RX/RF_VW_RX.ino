@@ -1,5 +1,3 @@
-// receiver.pde
-//
 // Simple example of how to use VirtualWire to receive messages
 // Implements a simplex (one-way) receiver with an Rx-B1 module
 //
@@ -24,6 +22,7 @@ void setup()
     vw_setup(2000);  // Bits per sec
 
     vw_rx_start();       // Start the receiver PLL running
+    Serial.println("finished setup");
 }
 
 void loop()
@@ -31,13 +30,14 @@ void loop()
     uint8_t buf[VW_MAX_MESSAGE_LEN];
     uint8_t buflen = VW_MAX_MESSAGE_LEN;
 
+  Serial.print("<");
     if (vw_get_message(buf, &buflen)) // Non-blocking
     {
       int i;
 
       digitalWrite(13, true); // Flash a light to show received good message
       // Message with a good checksum received, dump it.
-      Serial.print("Got: ");
+      Serial.print("Got ("); Serial.print(buflen); Serial.print("):");
   
       for (i = 0; i < buflen; i++)
       {
@@ -47,4 +47,5 @@ void loop()
       Serial.println("");
       digitalWrite(13, false);
     }
+    Serial.print(">");
 }
