@@ -12,6 +12,10 @@
 #undef double
 #undef float
 #undef round
+
+long countIdle = 0;
+int charCount = 0;
+
 void setup()
 {
     Serial.begin(9600);  // Debugging only
@@ -30,22 +34,39 @@ void loop()
     uint8_t buf[VW_MAX_MESSAGE_LEN];
     uint8_t buflen = VW_MAX_MESSAGE_LEN;
 
-  Serial.print("<");
-    if (vw_get_message(buf, &buflen)) // Non-blocking
-    {
-      int i;
-
-      digitalWrite(13, true); // Flash a light to show received good message
-      // Message with a good checksum received, dump it.
-      Serial.print("Got ("); Serial.print(buflen); Serial.print("):");
+   if (!vw_have_message()) {
+     countIdle += 1;
+     
+     if (countIdle > 60000 ) // every few rounds, go another line.
+     {
+        countIdle = 0;
+        Serial.print(".");
+        charCount +=1; 
+        if (charCount > 40)
+        {
+          Serial.println(".");
+          charCount = 0;
+        }
+     }
+   } else {
+     Serial.println("must be a message");
+     countIdle = 0;
+     
+     if (vw_get_message(buf, &buflen)) // Non-blocking
+     {
+        int i;
   
-      for (i = 0; i < buflen; i++)
-      {
-          Serial.print((char)buf[i]);
-          Serial.print(" ");
-      }
-      Serial.println("");
-      digitalWrite(13, false);
-    }
-    Serial.print(">");
+        digitalWrite(13, true); // Flash a light to show received good message
+        // Message with a good checksum received, dump it.
+        Serial.print("Got ("); Serial.print(buflen); Serial.print("):");
+    
+        for (i = 0; i < buflen; i++)
+        {
+            Serial.print((char)buf[i]);
+            Serial.print(" ");
+        }
+        Serial.println("");
+        digitalWrite(13, false);
+     }
+   }
 }
