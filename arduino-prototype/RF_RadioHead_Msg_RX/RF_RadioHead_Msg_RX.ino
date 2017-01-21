@@ -42,10 +42,14 @@ uint8_t buf[RH_ASK_MAX_MESSAGE_LEN];
 
 void loop()
 {
+  receiveMessage();
+  
+  /* 
   if (manager.available())
   { 
-    receiveMessage();
+    
   }
+  */
 }
 
 void receiveMessage()
@@ -59,11 +63,11 @@ void receiveMessage()
     Serial.print(from, HEX);
     Serial.print(": ");
     Serial.println((char*)buf);
-    // sendResponse();
+    // sendResponse(from);
   }
 }
 
-void sendResponse()
+void sendResponse(uint8_t from)
 {
     // Send a reply back to the originator client
     Serial.print("Replying with: ");
