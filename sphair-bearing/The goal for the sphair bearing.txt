@@ -1,0 +1,6 @@
+Aim: To facilitate testing of the attitude for cubesats on earth.
+
+Theory: Using air, a very low friction bearing can be created which can contain the reaction wheels to be tested.
+Such as in the following videos (except a full sphere):
+https://www.youtube.com/watch?v=NZOZ7D84A9Q
+https://www.youtube.com/watch?v=muAt8WrLZ7A
