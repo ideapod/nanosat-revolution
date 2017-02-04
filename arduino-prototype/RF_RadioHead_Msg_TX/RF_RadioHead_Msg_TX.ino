@@ -1,7 +1,7 @@
 // sending data reliably, from the radio example code: ask_reliable_datagram_client.pde
 // uses 433 MHz modules from IC Station: http://www.icstation.com/433mhz-transmitter-receiver-arduino-project-p-1402.html
 // power with 5V. 
-// connect data pin to pin 12 (or whatever you set)
+// connect transmit module data pin to pin 12 (or whatever you set), and receive module to pin 11
 // I didn't need an antenna to get this going, but that's with devices 20cm from eachother.
 // see http://www.airspayce.com/mikem/arduino/RadioHead/classRH__ASK.html for more on how to use radio head and the ASK driver.
 // default set up is RH_ASK (uint16_t speed=2000, uint8_t rxPin=11, uint8_t txPin=12, uint8_t pttPin=10, bool pttInverted=false)
@@ -24,6 +24,9 @@ RHReliableDatagram manager(driver, CLIENT_ADDRESS);
 void setup() 
 {
   Serial.begin(9600);
+  manager.setTimeout(500);
+  manager.setRetries(5);
+  manager.setHeaderFlags(RH_FLAGS_ACK);
   if (manager.init())
   {
     Serial.println("initialised ok");
@@ -34,25 +37,42 @@ void setup()
   }
 }
 
-
+uint8_t data[] = "Hello World!";
+// Dont put this on the stack:
+uint8_t buf[RH_ASK_MAX_MESSAGE_LEN];
 
 void loop() 
 {
-  uint8_t data[] = "Hello World!";
-  // MJDS - why not - Dont put this on the stack:
-  uint8_t buf[RH_ASK_MAX_MESSAGE_LEN];
 
-  Serial.print("Sending to ask_reliable_datagram_server:");
+
+  Serial.print("Sending to SERVER:");
   Serial.print(sizeof(data));
   Serial.println(": bytes");
     
   // Send a message to manager_server
   if (manager.sendtoWait(data, sizeof(data), SERVER_ADDRESS))
   {
-    // Now wait for a reply from the server
+    Serial.println("Send successfully, waiting for reply");
+    getReply();
+  }
+  else
+  {
+    Serial.println("sendtoWait failed ");
+    Serial.print(manager.retries());
+    Serial.println(" number of retries");
+  }
+
+  Serial.println("Wait for 2 seconds before going again");
+  delay(2000);
+}
+
+void getReply()
+{
+   // Now wait for a reply from the server
     uint8_t len = sizeof(buf);
-    uint8_t from;   
-    if (manager.recvfromAckTimeout(buf, &len, 2000, &from))
+    uint8_t from;
+    uint8_t flags = RH_FLAGS_ACK;   
+    if (manager.recvfromAckTimeout(buf, &len, 2000, &from, NULL, &flags))
     {
       Serial.print("got reply from : 0x");
       Serial.print(from, HEX);
@@ -63,10 +83,5 @@ void loop()
     {
       Serial.println("No reply, is ask_reliable_datagram_server running?");
     }
-  }
-  else
-    Serial.println("sendtoWait failed");
-  delay(500);
 }
-
 
