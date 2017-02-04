@@ -1,0 +1,14 @@
+#ifndef I2CHelper_h
+#define I2CHelper_h
+
+#include "Arduino.h"
+
+class I2CHelper {
+    I2CHelper();
+    ~I2CHelper();
+  private:
+    int _pin;
+
+}
+
+#endif
