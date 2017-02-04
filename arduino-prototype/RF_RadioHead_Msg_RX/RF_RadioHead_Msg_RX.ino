@@ -26,6 +26,7 @@ void setup()
   Serial.begin(9600);
   manager.setTimeout(500);
   manager.setRetries(6);
+  manager.setHeaderFlags(RH_FLAGS_ACK);
   if (manager.init())
   {
     Serial.println("initialised ok");
@@ -57,13 +58,20 @@ void receiveMessage()
   // Wait for a message addressed to us from the client
   uint8_t len = sizeof(buf);
   uint8_t from;
-  if (manager.recvfromAck(buf, &len, &from))
+  uint8_t flags = RH_FLAGS_ACK;
+
+
+  // TODO - set ack flage here? 
+  if (manager.recvfromAck(buf, &len, &from, NULL, &flags))
   {
-    Serial.print("got message from : 0x");
+    Serial.print("my address: ");
+    Serial.print(manager.thisAddress());
+    Serial.print(" got message from : 0x");
     Serial.print(from, HEX);
     Serial.print(": ");
     Serial.println((char*)buf);
-    // sendResponse(from);
+
+    sendResponse(from);
   }
 }
 

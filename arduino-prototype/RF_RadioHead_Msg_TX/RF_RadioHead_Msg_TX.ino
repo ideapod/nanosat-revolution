@@ -26,6 +26,7 @@ void setup()
   Serial.begin(9600);
   manager.setTimeout(500);
   manager.setRetries(5);
+  manager.setHeaderFlags(RH_FLAGS_ACK);
   if (manager.init())
   {
     Serial.println("initialised ok");
@@ -52,7 +53,7 @@ void loop()
   if (manager.sendtoWait(data, sizeof(data), SERVER_ADDRESS))
   {
     Serial.println("Send successfully, waiting for reply");
-    // getReply();
+    getReply();
   }
   else
   {
@@ -69,8 +70,9 @@ void getReply()
 {
    // Now wait for a reply from the server
     uint8_t len = sizeof(buf);
-    uint8_t from;   
-    if (manager.recvfromAckTimeout(buf, &len, 2000, &from))
+    uint8_t from;
+    uint8_t flags = RH_FLAGS_ACK;   
+    if (manager.recvfromAckTimeout(buf, &len, 2000, &from, NULL, &flags))
     {
       Serial.print("got reply from : 0x");
       Serial.print(from, HEX);
