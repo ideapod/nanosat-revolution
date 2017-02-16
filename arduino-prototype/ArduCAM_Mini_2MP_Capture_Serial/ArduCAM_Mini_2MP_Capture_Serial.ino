@@ -106,12 +106,14 @@ void setup(){
   uint8_t temp = 0;
 
   Wire.begin();
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial.println("ArduCAM Start!");
 
   //set the CS as an output:
   pinMode(SPI_CS,OUTPUT);
-
+  pinMode(6,OUTPUT);
+  digitalWrite(6,HIGH);
+  
   // initialize SPI:
   SPI.begin();
   delay(1000);
