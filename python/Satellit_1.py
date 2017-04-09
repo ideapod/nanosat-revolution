@@ -31,6 +31,7 @@ V_g = r/R*np.sqrt(G*M/R)    # Ground track velocity
 D_max = np.sqrt(R**2-r**2)  # Distance satellite to horizon
 R_p = r*np.sqrt(1-r**2/R**2)    # Radii of the visible ground 
 GR_UV = 1.22/O_T*UV*H       # Ground resolution UV
+
 GR_VIS = 1.22/O_T*VIS*H
 GR_NIR = 1.22/O_T*NIR*H
 GR_MIR = 1.22/O_T*MIR*H
