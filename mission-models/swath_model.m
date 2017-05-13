@@ -84,3 +84,5 @@ plot(h./1000,Spa);
 grid();
 xlabel('Orbit hight [km]');
 ylabel('Spatial Resolution [m]');
+
+
